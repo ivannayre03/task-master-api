@@ -12,7 +12,7 @@ class TaskController extends Controller
 {
     public function index() // GET
     {
-        $tasks = Task::where('status', '!=', 'deleted')->get();
+        $tasks = Task::where('status', '!=', 'delete')->get();
 
         return new TaskResourceCollection($tasks);
     }
