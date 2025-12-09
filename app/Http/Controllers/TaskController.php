@@ -10,7 +10,6 @@ use App\Http\Resources\TaskResource;
 
 class TaskController extends Controller
 {
-    // CRUD OPERATION LARAVEL API
     public function index() // GET
     {
         $user = auth()->user();
