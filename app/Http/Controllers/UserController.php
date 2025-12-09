@@ -11,11 +11,19 @@ class UserController extends Controller
 {
     public function store(Request $request) // users -> POST
     {
-        $data = $request->all(); // { name, email, password } Ivan Nayre, ivannayre03@gmail.com, roronoaace12
-        $userExist = User::where('email', $request->email)->exists(); // true or false
+        $data = $request->all();
 
-        if($userExist)
-        {
+        if (empty($data['password']) || empty($data['passwordRepeat']) || empty($data['email']) || empty($data['name'])) {
+            return response()->json(['message' => "Please fill-up empty field(s)."], Response::HTTP_FORBIDDEN);
+        }
+
+        if ($data['password'] != $data['passwordRepeat']) {
+            return response()->json(['message' => "Password confirmation does not match."], Response::HTTP_FORBIDDEN);
+        }
+
+        $userExist = User::where('email', $request->email)->exists();
+
+        if ($userExist) {
             return response()->json(['message' => "This email is already been taken."], Response::HTTP_FORBIDDEN);
         }
 
@@ -28,10 +36,14 @@ class UserController extends Controller
     public function login(Request $request) // login
     {
         $data = $request->all();
+
+        if (empty($data['password']) || empty($data['email'])) {
+            return response()->json(['message' => "Please fill-up empty field(s)."], Response::HTTP_FORBIDDEN);
+        }
+
         $authenticated = $this->authenticate($data);
 
-        if($authenticated)
-        {
+        if ($authenticated) {
             $user = [
                 'name' => $authenticated->name,
                 'email' => $authenticated->email,
@@ -48,18 +60,15 @@ class UserController extends Controller
     {
         $user = User::where('email', $credentials['email'])->first();
 
-        if($user)
-        {
-            if(Hash::check($credentials['password'], $user->password))
-            {
-                if(!$user->remember_token)
-                {
-                    $secretKey = 'task_master_'.date('Y').'_secret_' . $user->email;
+        if ($user) {
+            if (Hash::check($credentials['password'], $user->password)) {
+                if (!$user->remember_token) {
+                    $secretKey = 'task_master_' . date('Y') . '_secret_' . $user->email;
                     $authToken = $user->createToken($secretKey)->plainTextToken;
                     $user->remember_token = $authToken;
-                    $user->save(); 
+                    $user->save();
                 }
-   
+
                 return $user;
             }
         }
