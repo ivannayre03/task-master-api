@@ -14,7 +14,7 @@ class TaskController extends Controller
     public function index() // GET
     {
         $user = auth()->user();
-        $tasks = Task::where('user_id', $user->user_id)->where('status', '!=', 'delete')->get();
+        $tasks = Task::where('user_id', $user->id)->where('status', '!=', 'delete')->get();
 
         return new TaskResourceCollection($tasks);
     }
@@ -22,8 +22,8 @@ class TaskController extends Controller
     public function store(Request $request) // POST
     {
         $user = auth()->user();
-        $data = $request->all(); // { title, description, status, etc.. }
-        $data['user_id'] = $user->user_id;
+        $data = $request->all();
+        $data['user_id'] = $user->id;
 
         $newTask = Task::create($data);
 
