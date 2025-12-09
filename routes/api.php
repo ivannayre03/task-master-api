@@ -9,7 +9,7 @@ Route::prefix('v1')->group(function () {
 
     Route::apiResource('users', UserController::class);
 
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::apiResource('tasks', TaskController::class);
     });
