@@ -10,18 +10,20 @@ use App\Http\Resources\TaskResource;
 
 class TaskController extends Controller
 {
-
     // CRUD OPERATION LARAVEL API
     public function index() // GET
     {
-        $tasks = Task::where('status', '!=', 'delete')->get();
+        $user = auth()->user;
+        $tasks = Task::where('user_id', $user->user_id)->where('status', '!=', 'delete')->get();
 
         return new TaskResourceCollection($tasks);
     }
 
-    public function store(Request $request)// POST
+    public function store(Request $request) // POST
     {
+        $user = auth()->user;
         $data = $request->all(); // { title, description, status, etc.. }
+        $data['user_id'] = $user->user_id;
 
         $newTask = Task::create($data);
 
