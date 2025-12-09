@@ -52,13 +52,18 @@ class UserController extends Controller
         {
             if(Hash::check($credentials['password'], $user->password))
             {
-                $secretKey = 'task_master_'.date('Y').'_secret_' . $user->email;
-                $authToken = $user->createToken($secretKey)->plainTextToken;
-                $user->remember_token = $authToken;
-                $user->save();    
+                if(!$user->remember_token)
+                {
+                    $secretKey = 'task_master_'.date('Y').'_secret_' . $user->email;
+                    $authToken = $user->createToken($secretKey)->plainTextToken;
+                    $user->remember_token = $authToken;
+                    $user->save(); 
+                }
+   
+                return $user;
             }
         }
 
-        return $user;
+        return null;
     }
 }
