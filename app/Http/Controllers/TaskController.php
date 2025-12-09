@@ -12,7 +12,7 @@ class TaskController extends Controller
 {
     public function index() // GET
     {
-        $tasks = Task::get();
+        $tasks = Task::where('status', '!=', 'deleted')->get();
 
         return new TaskResourceCollection($tasks);
     }
@@ -21,9 +21,9 @@ class TaskController extends Controller
     {
         $data = $request->all(); // { title, description, status, etc.. }
 
-        Task::create($data);
+        $newTask = Task::create($data);
 
-        return response()->json(['message' => 'Task successfully created.']);
+        return new TaskResource($newTask);
     }
 
     public function update($id, Request $request) // tasks/{id} PUT
