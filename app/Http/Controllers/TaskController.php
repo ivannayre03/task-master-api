@@ -10,6 +10,8 @@ use App\Http\Resources\TaskResource;
 
 class TaskController extends Controller
 {
+
+    // CRUD OPERATION LARAVEL API
     public function index() // GET
     {
         $tasks = Task::where('status', '!=', 'delete')->get();
@@ -33,5 +35,14 @@ class TaskController extends Controller
         $task->save();
 
         return new TaskResource($task);
+    }
+
+    public function destroy($id) // tasks/{id} DELETE
+    {
+        $task = Task::find($id);
+        $task->status = "delete";
+        $task->save();
+
+        return response()->json(['message' => "Task successfully deleted."]);
     }
 }
